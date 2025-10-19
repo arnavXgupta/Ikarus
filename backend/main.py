@@ -1,5 +1,7 @@
-import os
+# import os
 import json
+import gc
+import os
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -18,8 +20,8 @@ app = FastAPI(
 )
 
 origins = [
-    "https://ikarus-3s4a.vercel.app", # Your deployed Vercel URL
-    "http://localhost:5173",       # Your local development URL (good to keep)
+    "https://ikarus-3s4a.vercel.app",  # Your deployed Vercel URL
+    "http://localhost:3000",  # Your local development URL (good to keep)
 ]
 
 app.add_middleware(
@@ -49,21 +51,31 @@ llm = None
 def initialize_models():
     """Initialize heavy models only once (when first needed)."""
     global embeddings, vectorstore, llm
-
+    
     if embeddings is None:
-        print("Initializing embedding model...")
-        from langchain_huggingface import HuggingFaceEmbeddings
-        embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-
+        print("Initializing FastEmbed embedding model...")
+        from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
+        
+        # FastEmbed uses ~100-150MB RAM vs 400-500MB for HuggingFace
+        embeddings = FastEmbedEmbeddings(
+            model_name="BAAI/bge-small-en-v1.5",  # Default FastEmbed model
+            max_length=512,
+            threads=1  # Limit threads for low-resource environments
+        )
+        gc.collect()  # Force garbage collection after initialization
+        print("FastEmbed model loaded successfully!")
+    
     if vectorstore is None:
         print("Initializing Pinecone vector store...")
         from langchain_pinecone import PineconeVectorStore
         vectorstore = PineconeVectorStore(index_name=PINECONE_INDEX_NAME, embedding=embeddings)
-
+        print("Pinecone vector store initialized!")
+    
     if llm is None:
         print("Initializing Generative AI model...")
         from langchain_google_genai import ChatGoogleGenerativeAI
         llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", google_api_key=GOOGLE_API_KEY)
+        print("LLM initialized!")
 
 # --- 5. ENDPOINTS ---
 @app.get("/")
@@ -77,7 +89,7 @@ def read_health():
 @app.get("/analytics")
 def get_analytics_data():
     try:
-        with open('../notebooks/analytics_data.json', 'r') as f:
+        with open('./analytics_data.json', 'r') as f:
             analytics_data = json.load(f)
         return analytics_data
     except FileNotFoundError:
@@ -88,35 +100,37 @@ def get_analytics_data():
 @app.post("/recommend", response_model=list[RecommendedProduct])
 def get_recommendations(query: Query):
     initialize_models()  # <--- Initialize here (first request)
-
+    
     from langchain_core.prompts import PromptTemplate
     from langchain_core.output_parsers import StrOutputParser
     from langchain_core.runnables import RunnablePassthrough
-
+    
     retriever = vectorstore.as_retriever(search_kwargs={'k': 3})
+    
     template = """
-    You are a creative marketing assistant for a furniture store.
-    Based on the following product details, write a short, engaging, and creative product description (2-3 sentences).
+You are a creative marketing assistant for a furniture store.
+Based on the following product details, write a short, engaging, and creative product description (2-3 sentences).
 
-    Product Details:
-    - Title: {title}
-    - Brand: {brand}
-    - Material: {material}
+Product Details:
+- Title: {title}
+- Brand: {brand}
+- Material: {material}
 
-    Creative Description:
-    """
+Creative Description:
+"""
+    
     prompt = PromptTemplate.from_template(template)
-
+    
     chain = (
         {"title": RunnablePassthrough(), "brand": RunnablePassthrough(), "material": RunnablePassthrough()}
         | prompt
         | llm
         | StrOutputParser()
     )
-
+    
     similar_docs = retriever.invoke(query.prompt)
+    
     recommendations = []
-
     for doc in similar_docs:
         raw_text = doc.page_content
         material = ""
@@ -124,13 +138,13 @@ def get_recommendations(query: Query):
             material = raw_text.split(' | ')[-2]
         except IndexError:
             pass
-
+        
         generated_description = chain.invoke({
             "title": doc.metadata.get('title', ''),
             "brand": doc.metadata.get('brand', ''),
             "material": material
         })
-
+        
         recommendations.append(
             RecommendedProduct(
                 title=doc.metadata.get('title', 'No Title'),
@@ -140,5 +154,5 @@ def get_recommendations(query: Query):
                 generated_description=generated_description
             )
         )
-
+    
     return recommendations
