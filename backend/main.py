@@ -150,6 +150,11 @@ Creative Description:
                 title=doc.metadata.get('title', 'No Title'),
                 brand=doc.metadata.get('brand', 'No Brand'),
                 price=doc.metadata.get('price', 0.0),
+                dimensions=doc.metadata.get('package_dimensions', 'N/A'),
+                countryOfOrigin=doc.metadata.get('country_of_origin', 'N/A'),
+                color=doc.metadata.get('color', 'N/A'),
+                material=doc.metadata.get('material', 'N/A'),
+                manufacturer=doc.metadata.get('manufacturer', 'N/A'),
                 images=doc.metadata.get('images', '[]'),
                 generated_description=generated_description
             )
