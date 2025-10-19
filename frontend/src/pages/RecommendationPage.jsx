@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import ProductCard from "../components/ProductCard";
-const API_URL = "http://127.0.0.1:8000"; // Your FastAPI backend URL
+// const API_URL = "http://127.0.0.1:8000"; //  FastAPI backend URL
+const API_URL = "https://ikarus-ltrs.onrender.com"; //  deployed FastAPI backend URL
 
 function RecommendationPage() {
   const [prompt, setPrompt] = useState("");
