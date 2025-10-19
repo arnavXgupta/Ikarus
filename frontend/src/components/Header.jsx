@@ -7,7 +7,7 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <header className="bg-[#18191A] text-gray-200 py-2 px-4">
+    <header className="bg-gradient-to-br from-gray-650 via-neutral-900 to-gray-950 text-gray-200 py-2 px-4">
       <div className="max-w-6xl mx-auto flex items-center justify-between">
         {/* Left: Logo + Brand */}
         <div className="flex items-center gap-3">

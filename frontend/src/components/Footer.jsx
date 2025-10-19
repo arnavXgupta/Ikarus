@@ -3,7 +3,7 @@ import { Mail, Image, MessageSquare } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="bg-[#18191A] text-gray-400 py-4 sm:py-5 px-3 sm:px-4">
+    <footer className="bg-gradient-to-br from-gray-650 via-neutral-900 to-gray-950 text-gray-400 py-4 sm:py-5 px-3 sm:px-4">
       <div className="max-w-4xl mx-auto flex flex-col items-center">
         <div className="flex flex-col gap-4 sm:gap-6 w-full">
           {/* Links Row */}
