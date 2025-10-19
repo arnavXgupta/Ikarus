@@ -74,6 +74,10 @@ def read_root():
     """Root endpoint to check if the API is running."""
     return {"message": "Welcome to the Product Recommendation API!"}
 
+@app.get("/health")
+def read_health():
+    return {"message": "Healthy"}
+
 
 @app.get("/analytics")
 def get_analytics_data():

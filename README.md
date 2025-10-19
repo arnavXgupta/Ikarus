@@ -17,7 +17,7 @@ The application features two main pages:
 -   **Vector Database:** Pinecone
 -   **AI/ML Framework:** LangChain
 -   **Embedding Model:** `sentence-transformers/all-MiniLM-L6-v2` (from HuggingFace)
--   **Generative AI:** Google Gemini Pro
+-   **Generative AI:** Google Gemini 2.5 flash
 -   **Data Science:** Pandas, Matplotlib, Seaborn
 -   **Frontend Libraries:** Axios, React Router, Recharts
 
