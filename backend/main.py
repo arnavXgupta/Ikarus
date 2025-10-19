@@ -17,9 +17,14 @@ app = FastAPI(
     description="API for furniture product recommendations and analytics.",
 )
 
+origins = [
+    "https://ikarus-3s4a.vercel.app", # Your deployed Vercel URL
+    "http://localhost:5173",       # Your local development URL (good to keep)
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
