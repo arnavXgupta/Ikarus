@@ -42,6 +42,11 @@ class RecommendedProduct(BaseModel):
     price: float
     images: str
     generated_description: str
+    dimensions: str = "N/A"
+    countryOfOrigin: str = "N/A"
+    color: str = "N/A"
+    material: str = "N/A"
+    manufacturer: str = "N/A"
 
 # --- 4. LAZY INITIALIZATION VARIABLES ---
 embeddings = None
@@ -132,29 +137,43 @@ Creative Description:
     
     recommendations = []
     for doc in similar_docs:
-        raw_text = doc.page_content
-        material = ""
-        try:
-            material = raw_text.split(' | ')[-2]
-        except IndexError:
-            pass
+        # Extract data from metadata and text field
+        title = doc.metadata.get('title', 'No Title')
+        brand = doc.metadata.get('brand', 'No Brand')
+        
+        # Try to get additional fields from metadata first, then fall back to text parsing
+        material = doc.metadata.get('material', 'N/A')
+        color = doc.metadata.get('color', 'N/A')
+        dimensions = doc.metadata.get('package_dimensions', 'N/A')
+        countryOfOrigin = doc.metadata.get('country_of_origin', 'N/A')
+        manufacturer = doc.metadata.get('manufacturer', 'N/A')
+        
+        # If fields are still N/A, try to extract from text field (combined_text)
+        if material == 'N/A' or color == 'N/A':
+            text_content = doc.metadata.get('text', doc.page_content)
+            parts = text_content.split(' | ')
+            if len(parts) >= 6:
+                if material == 'N/A':
+                    material = parts[4] if parts[4] else 'N/A'
+                if color == 'N/A':
+                    color = parts[5] if parts[5] else 'N/A'
         
         generated_description = chain.invoke({
-            "title": doc.metadata.get('title', ''),
-            "brand": doc.metadata.get('brand', ''),
+            "title": title,
+            "brand": brand,
             "material": material
         })
         
         recommendations.append(
             RecommendedProduct(
-                title=doc.metadata.get('title', 'No Title'),
-                brand=doc.metadata.get('brand', 'No Brand'),
+                title=title,
+                brand=brand,
                 price=doc.metadata.get('price', 0.0),
-                dimensions=doc.metadata.get('package_dimensions', 'N/A'),
-                countryOfOrigin=doc.metadata.get('country_of_origin', 'N/A'),
-                color=doc.metadata.get('color', 'N/A'),
-                material=doc.metadata.get('material', 'N/A'),
-                manufacturer=doc.metadata.get('manufacturer', 'N/A'),
+                dimensions=dimensions,
+                countryOfOrigin=countryOfOrigin,
+                color=color,
+                material=material,
+                manufacturer=manufacturer,
                 images=doc.metadata.get('images', '[]'),
                 generated_description=generated_description
             )
