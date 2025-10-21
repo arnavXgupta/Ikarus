@@ -1,26 +1,33 @@
-# AI-Powered Furniture Recommendation App (Ikarus)
+# 🛋️ AI-Powered Furniture Recommendation App
 
-## Project Overview
-
-This is a full-stack web application that uses a combination of Machine Learning, NLP, and Generative AI to recommend furniture products and generate creative descriptions. The project was built over a 2-day span as part of an intern assignment.
-
-The application features two main pages:
-1.  **Recommendation Page:** A conversational UI where users can describe the furniture they're looking for and receive AI-powered recommendations.
-2.  **Analytics Page:** A dashboard displaying visualizations and insights from the product dataset.
+An intelligent full-stack web application that leverages **Machine Learning**, **NLP**, and **Generative AI** to deliver personalised furniture recommendations and generate creative product descriptions. Built as part of an intern assignment to demonstrate real-world AI integration in e-commerce.
 
 ---
 
-## Tech Stack
+## 🌟 Features
 
--   **Backend:** FastAPI
--   **Frontend:** React (with Vite)
--   **Vector Database:** Pinecone
--   **AI/ML Framework:** LangChain
--   **Embedding Model:** `sentence-transformers/all-MiniLM-L6-v2` (from HuggingFace)
--   **Generative AI:** Google Gemini 2.5 flash
--   **Data Science:** Pandas, Matplotlib, Seaborn
--   **Frontend Libraries:** Axios, React Router, Recharts
+- **Conversational Furniture Search:** Chat-style interface where users describe their ideal furniture and receive AI-powered recommendations
+- **Semantic Similarity Matching:** Uses advanced embedding models to understand user intent and match products accurately
+- **AI-Generated Descriptions:** Leverages Google Gemini Pro to create unique, engaging product descriptions
+- **Interactive Analytics Dashboard:** Visual insights into product trends, popular brands, materials, and categories
 
 ---
 
-## Project Structure
+## 🎥 Live Demo
+
+- **Frontend:** [https://ikarus-3s4a.vercel.app](https://ikarus-3s4a.vercel.app)  
+- **Backend API:** [https://ikarus-ltrs.onrender.com](https://ikarus-ltrs.onrender.com)
+
+---
+
+## 🧠 Tech Stack
+
+**Backend:** FastAPI  
+**Frontend:** React
+**Vector Database:** Pinecone  
+**AI Framework:** LangChain  
+**Embedding Model:** `BAAI/bge-small-en-v1.5` (FastEmbedEmbeddings)  
+**Generative AI:** Google Gemini Pro  
+**Data Analysis:** Pandas, Matplotlib, Seaborn  
+**Deployment:** Vercel (Frontend), Render (Backend)  
+**UI Libraries:** Axios, React Router, Recharts
