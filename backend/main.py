@@ -61,7 +61,6 @@ def initialize_models():
         print("Initializing FastEmbed embedding model...")
         from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
         
-        # FastEmbed uses ~100-150MB RAM vs 400-500MB for HuggingFace
         embeddings = FastEmbedEmbeddings(
             model_name="BAAI/bge-small-en-v1.5",  # Default FastEmbed model
             max_length=512,
